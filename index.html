@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ML model</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    </head>
+    <body>
+        <div class="menu">
+            <button class="menu-button" onclick="toggleDropdown()">
+                <i class="fas fa-bars"></i> Меню
+            </button>
+            <div class="dropdown" id="dropdownMenu">
+                <a href="index.html">Главный экран</a>
+                <a href="graph.html">Графики</a>
+            </div>
+        </div>
+        
+        <div class="parent">
+            <div class="div1">Aspect-based prediction model by Erkebulan</div>
+
+            <div class="div7">
+                <input type="text" placeholder="Username" id="username">
+            </div>
+            <div class="div8">
+                <input type="text" placeholder="Device" id="device">
+            </div>
+            <div class="div2">
+                <input type="text" placeholder="Input Text" id="inputText">
+            </div>
+
+            <div class="div3">
+                <button onclick="predictAnalysis()">
+                    Predict Sentiment
+                </button>
+            </div>
+            <div class="div4" ><h3>Text</h3> <h4 id="div4"></h4></div>
+            <div class="div5" ><h3>Aspect</h3> <h4 id="div5"></h4></div>
+            <div class="div6" ><h3>Sentiment</h3> <h4 id="div6"></h4></div>
+        </div>
+    </body>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function predictAnalysis() {
+            const text = document.getElementById('inputText').value;
+            const device = document.getElementById('device').value;
+            const username = document.getElementById('username').value;
+
+            const response = await fetch('http://127.0.0.1:8000/predict/analysis/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text, device: device, username: username }),
+            });
+            const data = await response.json();
+            console.log(data);
+
+            // Display the input text
+            document.getElementById('div4').textContent = `${text}`;
+    
+
+            document.getElementById('div5').textContent = `${data.aspects}`;
+
+            // Display the sentiment
+            document.getElementById('div6').textContent = `${data.sentiment}`;
+
+        }
+    </script>
+
+
+<style>
+        .menu-button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown a:hover {
+            background-color: #f1f1f1;
+        }
+</style>
+
+</html>
